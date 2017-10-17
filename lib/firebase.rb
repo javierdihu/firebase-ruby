@@ -6,9 +6,9 @@ require 'uri'
 
 module Firebase
   class Client
-    attr_reader :auth, :request
+    attr_reader :access_token, :request
 
-    def initialize(base_uri, auth=nil)
+    def initialize(base_uri, access_token=nil)
       if base_uri !~ URI::regexp(%w(https))
         raise ArgumentError.new('base_uri must be a valid https uri')
       end
@@ -19,7 +19,7 @@ module Firebase
           'Content-Type' => 'application/json'
         }
       })
-      @auth = auth
+      @access_token = access_token
     end
 
     # Writes and returns the data
@@ -58,7 +58,7 @@ module Firebase
       end
       Firebase::Response.new @request.request(verb, "#{path}.json", {
         :body             => (data && data.to_json),
-        :query            => (@auth ? { :auth => @auth }.merge(query) : query),
+        :query            => (@access_token ? { :access_token => @access_token }.merge(query) : query),
         :follow_redirect  => true
       })
     end
